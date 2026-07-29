@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "carforge-ai-mcp",
+      "version": "0.1.0",
+      "title": "CarForge AI"
+    },
+    "tools": [
+      {
+        "name": "list_vehicles",
+        "title": "List vehicles",
+        "description": "List all vehicles available in the CarForge AI showroom, including id, name, personality, availability and supported customization categories.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_vehicle",
+        "title": "Get vehicle details",
+        "description": "Get full details for a single CarForge AI vehicle by id (bmw-m3, byd-seal, or porsche-manthey), including which exterior and interior customization categories it supports.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Vehicle id: bmw-m3, byd-seal, or porsche-manthey."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
