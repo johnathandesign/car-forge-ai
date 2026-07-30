@@ -53,7 +53,17 @@ export const VEHICLES: VehicleSummary[] = [
     descriptionEn: "An iconic track-focused car with a technical and aggressive character.",
     personality: "track",
     availability: "available",
-    supportedCategories: ["body-color", "rim-color", "caliper-color", "hood-color", "window-tint"],
+    supportedCategories: [
+      "body-color",
+      "rim-color",
+      "caliper-color",
+      "hood-color",
+      "window-tint",
+      "seats",
+      "dashboard",
+      "door-trim",
+      "interior-trim",
+    ],
   },
 ];
 

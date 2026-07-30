@@ -14,7 +14,13 @@ type Dict = {
   };
   showroom: { title: string; subtitle: string; note: string };
   closing: { eyebrow: string; headline: string; supporting: string; cta: string };
-  preview: { availability: string; categoriesLabel: string; exterior: string; interior: string; open: string };
+  preview: {
+    availability: string;
+    categoriesLabel: string;
+    exterior: string;
+    interior: string;
+    open: string;
+  };
   garage: {
     back: string;
     exterior: string;
@@ -44,6 +50,9 @@ type Dict = {
     resetBody: string;
     resetPrimary: string;
     cancel: string;
+    cameraExterior: string;
+    cameraInterior: string;
+    cameraFocusWheels: string;
   };
   a11y: {
     trigger: string;
@@ -63,11 +72,16 @@ type Dict = {
 const DICT: Record<Locale, Dict> = {
   he: {
     nav: { home: "בית", showroom: "אולם תצוגה", garage: "Garage" },
-    cta: { launchStudio: "לפתיחת הסטודיו", viewShowroom: "לצפייה באולם התצוגה", openInGarage: "פתיחה ב־Garage" },
+    cta: {
+      launchStudio: "לפתיחת הסטודיו",
+      viewShowroom: "לצפייה באולם התצוגה",
+      openInGarage: "פתיחה ב־Garage",
+    },
     hero: {
       eyebrow: "סטודיו תלת־ממדי חכם לעיצוב רכבים",
       headline: "עיצוב בלי גבולות.\nדיוק בלי ניחושים.",
-      supporting: "CarForge AI הוא סטודיו דיגיטלי להתאמה אישית של רכבים, עם תצוגה תלת־ממדית, שליטה מדויקת וחוויית מוסך מקצועית.",
+      supporting:
+        "CarForge AI הוא סטודיו דיגיטלי להתאמה אישית של רכבים, עם תצוגה תלת־ממדית, שליטה מדויקת וחוויית מוסך מקצועית.",
       imageAlt: "CarForge AI — רכב שעובר ממרכב בנוי לסריקה דיגיטלית בזמן אמת",
     },
     features: {
@@ -123,6 +137,9 @@ const DICT: Record<Locale, Dict> = {
       resetBody: "כל השינויים שבוצעו יחזרו למצב המקורי.",
       resetPrimary: "איפוס העיצוב",
       cancel: "ביטול",
+      cameraExterior: "מבט חיצוני",
+      cameraInterior: "מבט פנימי",
+      cameraFocusWheels: "התמקדות בחישוקים",
     },
     a11y: {
       trigger: "אפשרויות נגישות",
@@ -144,18 +161,36 @@ const DICT: Record<Locale, Dict> = {
   },
   en: {
     nav: { home: "Home", showroom: "Showroom", garage: "Garage" },
-    cta: { launchStudio: "Launch Studio", viewShowroom: "View Showroom", openInGarage: "Open in Garage" },
+    cta: {
+      launchStudio: "Launch Studio",
+      viewShowroom: "View Showroom",
+      openInGarage: "Open in Garage",
+    },
     hero: {
       eyebrow: "AI-Powered 3D Car Studio",
       headline: "Design Without Limits.\nRefine Without Guesswork.",
-      supporting: "CarForge AI is a digital vehicle customization studio with immersive 3D visualization, precise controls, and a professional garage experience.",
-      imageAlt: "CarForge AI — vehicle transitioning from a finished body into a real-time digital scan",
+      supporting:
+        "CarForge AI is a digital vehicle customization studio with immersive 3D visualization, precise controls, and a professional garage experience.",
+      imageAlt:
+        "CarForge AI — vehicle transitioning from a finished body into a real-time digital scan",
     },
     features: {
-      viz: { t: "3D Vehicle Visualization", s: "Explore the vehicle interactively from every angle." },
-      ext: { t: "Exterior Customization", s: "Colors, rims, spoilers, bumpers, and exterior trim." },
-      intr: { t: "Interior Customization", s: "Seats, colors, dashboard, door trim, and interior accents." },
-      hist: { t: "Reversible Design History", s: "Undo, restore, and compare with the original design." },
+      viz: {
+        t: "3D Vehicle Visualization",
+        s: "Explore the vehicle interactively from every angle.",
+      },
+      ext: {
+        t: "Exterior Customization",
+        s: "Colors, rims, spoilers, bumpers, and exterior trim.",
+      },
+      intr: {
+        t: "Interior Customization",
+        s: "Seats, colors, dashboard, door trim, and interior accents.",
+      },
+      hist: {
+        t: "Reversible Design History",
+        s: "Undo, restore, and compare with the original design.",
+      },
     },
     showroom: {
       title: "Showroom",
@@ -204,6 +239,9 @@ const DICT: Record<Locale, Dict> = {
       resetBody: "All changes will return to the original state.",
       resetPrimary: "Reset Design",
       cancel: "Cancel",
+      cameraExterior: "Exterior View",
+      cameraInterior: "Interior View",
+      cameraFocusWheels: "Focus Wheels",
     },
     a11y: {
       trigger: "Accessibility Options",
@@ -218,7 +256,8 @@ const DICT: Record<Locale, Dict> = {
     lang: { switchTo: "Switch language", he: "עברית", en: "English" },
     footer: {
       student: "CarForge AI is an educational demonstration project.",
-      noAffiliation: "This project is not affiliated with, endorsed by, or supported by BMW, BYD, Porsche, or any other vehicle manufacturer.",
+      noAffiliation:
+        "This project is not affiliated with, endorsed by, or supported by BMW, BYD, Porsche, or any other vehicle manufacturer.",
       copyright: "© CarForge AI. All rights reserved.",
     },
     loading: "Loading page…",
@@ -242,7 +281,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const dir = locale === "he" ? "rtl" : "ltr";
     document.documentElement.lang = locale;
     document.documentElement.dir = dir;
-    try { localStorage.setItem("carforge:locale", locale); } catch {}
+    try {
+      localStorage.setItem("carforge:locale", locale);
+    } catch {}
   }, [locale]);
 
   const value: I18nCtx = {

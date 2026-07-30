@@ -37,6 +37,9 @@ import {
   Lock,
   AlertCircle,
   Sliders,
+  Eye,
+  Armchair,
+  Disc3,
 } from "lucide-react";
 import {
   PORSCHE_BODY_COLORS,
@@ -137,6 +140,27 @@ function GaragePage() {
   const [porscheHoodColor, setPorscheHoodColor] = useState<PorscheColorChoice>(null);
   const [porscheWindowTint, setPorscheWindowTint] = useState(0);
 
+  // Porsche interior — the same real fields GarageCanvas already owns
+  // internally (see PorscheModel.tsx), now lifted to the route as
+  // controlled props instead of staying unreachable from the Studio UI.
+  const [porscheDashboardColor, setPorscheDashboardColor] = useState<PorscheColorChoice>(null);
+  const [porscheDashboardAlcantaraColor, setPorscheDashboardAlcantaraColor] =
+    useState<PorscheColorChoice>(null);
+  const [porscheSeatAlcantaraColor, setPorscheSeatAlcantaraColor] =
+    useState<PorscheColorChoice>(null);
+  const [porscheSeatLeatherColor, setPorscheSeatLeatherColor] = useState<PorscheColorChoice>(null);
+  const [porscheSeatCarbonColor, setPorscheSeatCarbonColor] = useState<PorscheColorChoice>(null);
+  const [porscheCarpetColor, setPorscheCarpetColor] = useState<PorscheColorChoice>(null);
+  const [porscheDoorLeatherColor, setPorscheDoorLeatherColor] = useState<PorscheColorChoice>(null);
+  const [porscheDoorUpperAlcantaraColor, setPorscheDoorUpperAlcantaraColor] =
+    useState<PorscheColorChoice>(null);
+  const [porscheDoorLowerAlcantaraColor, setPorscheDoorLowerAlcantaraColor] =
+    useState<PorscheColorChoice>(null);
+  const [porscheDoorCarbonTrimColor, setPorscheDoorCarbonTrimColor] =
+    useState<PorscheColorChoice>(null);
+  const [porscheDoorMetalTrimColor, setPorscheDoorMetalTrimColor] =
+    useState<PorscheColorChoice>(null);
+
   // Reset whenever the route's vehicle changes camera framing back to a
   // known-safe default (GarageCanvas already clamps every preset itself —
   // this just avoids leaving a stale "focus wheels" close-up framed on a
@@ -187,6 +211,17 @@ function GaragePage() {
         setPorscheHoodMode("separate");
         setPorscheHoodColor(null);
         setPorscheWindowTint(0);
+        setPorscheDashboardColor(null);
+        setPorscheDashboardAlcantaraColor(null);
+        setPorscheSeatAlcantaraColor(null);
+        setPorscheSeatLeatherColor(null);
+        setPorscheSeatCarbonColor(null);
+        setPorscheCarpetColor(null);
+        setPorscheDoorLeatherColor(null);
+        setPorscheDoorUpperAlcantaraColor(null);
+        setPorscheDoorLowerAlcantaraColor(null);
+        setPorscheDoorCarbonTrimColor(null);
+        setPorscheDoorMetalTrimColor(null);
         break;
     }
   }
@@ -220,6 +255,17 @@ function GaragePage() {
     if (porscheHoodMode === "separate") {
       pushChange("צבע מכסה מנוע", "Hood Color", porscheHoodColor);
     }
+    pushChange("דשבורד", "Dashboard", porscheDashboardColor);
+    pushChange("דשבורד — אלקנטרה", "Dashboard Alcantara", porscheDashboardAlcantaraColor);
+    pushChange("מושבים — אלקנטרה", "Seat Alcantara", porscheSeatAlcantaraColor);
+    pushChange("מושבים — עור", "Seat Leather", porscheSeatLeatherColor);
+    pushChange("מושבים — קרבון", "Seat Carbon", porscheSeatCarbonColor);
+    pushChange("שטיחים", "Carpet", porscheCarpetColor);
+    pushChange("דלתות — עור", "Door Leather", porscheDoorLeatherColor);
+    pushChange("דלתות — אלקנטרה עליון", "Door Upper Alcantara", porscheDoorUpperAlcantaraColor);
+    pushChange("דלתות — אלקנטרה תחתון", "Door Lower Alcantara", porscheDoorLowerAlcantaraColor);
+    pushChange("דלתות — גימור קרבון", "Door Carbon Trim", porscheDoorCarbonTrimColor);
+    pushChange("דלתות — גימור מתכת", "Door Metal Trim", porscheDoorMetalTrimColor);
     pushTint(porscheWindowTint);
   }
 
@@ -384,9 +430,65 @@ function GaragePage() {
                   onPorscheHoodColorChange={setPorscheHoodColor}
                   porscheWindowTint={porscheWindowTint}
                   onPorscheWindowTintChange={setPorscheWindowTint}
+                  porscheDashboardColor={porscheDashboardColor}
+                  onPorscheDashboardColorChange={setPorscheDashboardColor}
+                  porscheDashboardAlcantaraColor={porscheDashboardAlcantaraColor}
+                  onPorscheDashboardAlcantaraColorChange={setPorscheDashboardAlcantaraColor}
+                  porscheSeatAlcantaraColor={porscheSeatAlcantaraColor}
+                  onPorscheSeatAlcantaraColorChange={setPorscheSeatAlcantaraColor}
+                  porscheSeatLeatherColor={porscheSeatLeatherColor}
+                  onPorscheSeatLeatherColorChange={setPorscheSeatLeatherColor}
+                  porscheSeatCarbonColor={porscheSeatCarbonColor}
+                  onPorscheSeatCarbonColorChange={setPorscheSeatCarbonColor}
+                  porscheCarpetColor={porscheCarpetColor}
+                  onPorscheCarpetColorChange={setPorscheCarpetColor}
+                  porscheDoorLeatherColor={porscheDoorLeatherColor}
+                  onPorscheDoorLeatherColorChange={setPorscheDoorLeatherColor}
+                  porscheDoorUpperAlcantaraColor={porscheDoorUpperAlcantaraColor}
+                  onPorscheDoorUpperAlcantaraColorChange={setPorscheDoorUpperAlcantaraColor}
+                  porscheDoorLowerAlcantaraColor={porscheDoorLowerAlcantaraColor}
+                  onPorscheDoorLowerAlcantaraColorChange={setPorscheDoorLowerAlcantaraColor}
+                  porscheDoorCarbonTrimColor={porscheDoorCarbonTrimColor}
+                  onPorscheDoorCarbonTrimColorChange={setPorscheDoorCarbonTrimColor}
+                  porscheDoorMetalTrimColor={porscheDoorMetalTrimColor}
+                  onPorscheDoorMetalTrimColorChange={setPorscheDoorMetalTrimColor}
                 />
               </Suspense>
             </ClientOnly>
+          </div>
+
+          {/* Visible camera controls — real GarageCanvas runtime actions,
+              not tied only to the Exterior/Interior tab switch. */}
+          <div className="absolute bottom-3 inset-x-0 flex justify-center px-3 z-10 pointer-events-none">
+            <div className="flex items-center gap-1 rounded-full border border-white/15 bg-background/85 backdrop-blur-md px-1.5 py-1.5 pointer-events-auto shadow-lg">
+              <CameraBtn
+                icon={<Eye className="h-4 w-4" />}
+                label={t.garage.cameraExterior}
+                onClick={() => {
+                  setTab("exterior");
+                  setSelected(null);
+                  garageRef.current?.showExteriorView();
+                }}
+              />
+              <CameraBtn
+                icon={<Armchair className="h-4 w-4" />}
+                label={t.garage.cameraInterior}
+                onClick={() => {
+                  setTab("interior");
+                  setSelected(null);
+                  garageRef.current?.showInteriorView();
+                }}
+              />
+              <CameraBtn
+                icon={<Disc3 className="h-4 w-4" />}
+                label={t.garage.cameraFocusWheels}
+                onClick={() => {
+                  setTab("exterior");
+                  setSelected("rim-color");
+                  garageRef.current?.focusWheels();
+                }}
+              />
+            </div>
           </div>
         </section>
 
@@ -431,6 +533,28 @@ function GaragePage() {
             onPorscheHoodColorChange={setPorscheHoodColor}
             porscheWindowTint={porscheWindowTint}
             onPorscheWindowTintChange={setPorscheWindowTint}
+            porscheDashboardColor={porscheDashboardColor}
+            onPorscheDashboardColorChange={setPorscheDashboardColor}
+            porscheDashboardAlcantaraColor={porscheDashboardAlcantaraColor}
+            onPorscheDashboardAlcantaraColorChange={setPorscheDashboardAlcantaraColor}
+            porscheSeatAlcantaraColor={porscheSeatAlcantaraColor}
+            onPorscheSeatAlcantaraColorChange={setPorscheSeatAlcantaraColor}
+            porscheSeatLeatherColor={porscheSeatLeatherColor}
+            onPorscheSeatLeatherColorChange={setPorscheSeatLeatherColor}
+            porscheSeatCarbonColor={porscheSeatCarbonColor}
+            onPorscheSeatCarbonColorChange={setPorscheSeatCarbonColor}
+            porscheCarpetColor={porscheCarpetColor}
+            onPorscheCarpetColorChange={setPorscheCarpetColor}
+            porscheDoorLeatherColor={porscheDoorLeatherColor}
+            onPorscheDoorLeatherColorChange={setPorscheDoorLeatherColor}
+            porscheDoorUpperAlcantaraColor={porscheDoorUpperAlcantaraColor}
+            onPorscheDoorUpperAlcantaraColorChange={setPorscheDoorUpperAlcantaraColor}
+            porscheDoorLowerAlcantaraColor={porscheDoorLowerAlcantaraColor}
+            onPorscheDoorLowerAlcantaraColorChange={setPorscheDoorLowerAlcantaraColor}
+            porscheDoorCarbonTrimColor={porscheDoorCarbonTrimColor}
+            onPorscheDoorCarbonTrimColorChange={setPorscheDoorCarbonTrimColor}
+            porscheDoorMetalTrimColor={porscheDoorMetalTrimColor}
+            onPorscheDoorMetalTrimColorChange={setPorscheDoorMetalTrimColor}
           />
         </aside>
 
@@ -488,6 +612,28 @@ function GaragePage() {
                   onPorscheHoodColorChange={setPorscheHoodColor}
                   porscheWindowTint={porscheWindowTint}
                   onPorscheWindowTintChange={setPorscheWindowTint}
+                  porscheDashboardColor={porscheDashboardColor}
+                  onPorscheDashboardColorChange={setPorscheDashboardColor}
+                  porscheDashboardAlcantaraColor={porscheDashboardAlcantaraColor}
+                  onPorscheDashboardAlcantaraColorChange={setPorscheDashboardAlcantaraColor}
+                  porscheSeatAlcantaraColor={porscheSeatAlcantaraColor}
+                  onPorscheSeatAlcantaraColorChange={setPorscheSeatAlcantaraColor}
+                  porscheSeatLeatherColor={porscheSeatLeatherColor}
+                  onPorscheSeatLeatherColorChange={setPorscheSeatLeatherColor}
+                  porscheSeatCarbonColor={porscheSeatCarbonColor}
+                  onPorscheSeatCarbonColorChange={setPorscheSeatCarbonColor}
+                  porscheCarpetColor={porscheCarpetColor}
+                  onPorscheCarpetColorChange={setPorscheCarpetColor}
+                  porscheDoorLeatherColor={porscheDoorLeatherColor}
+                  onPorscheDoorLeatherColorChange={setPorscheDoorLeatherColor}
+                  porscheDoorUpperAlcantaraColor={porscheDoorUpperAlcantaraColor}
+                  onPorscheDoorUpperAlcantaraColorChange={setPorscheDoorUpperAlcantaraColor}
+                  porscheDoorLowerAlcantaraColor={porscheDoorLowerAlcantaraColor}
+                  onPorscheDoorLowerAlcantaraColorChange={setPorscheDoorLowerAlcantaraColor}
+                  porscheDoorCarbonTrimColor={porscheDoorCarbonTrimColor}
+                  onPorscheDoorCarbonTrimColorChange={setPorscheDoorCarbonTrimColor}
+                  porscheDoorMetalTrimColor={porscheDoorMetalTrimColor}
+                  onPorscheDoorMetalTrimColorChange={setPorscheDoorMetalTrimColor}
                 />
               </div>
             </SheetContent>
@@ -620,6 +766,29 @@ function IconBtn({
   );
 }
 
+function CameraBtn({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      onClick={onClick}
+      className="h-9 gap-1.5 rounded-full px-3 text-foreground/85 hover:bg-white/10"
+    >
+      {icon}
+      <span className="text-xs font-medium">{label}</span>
+    </Button>
+  );
+}
+
 function ColorSwatchRow({
   label,
   options,
@@ -733,6 +902,28 @@ interface CustomizationPanelProps {
   onPorscheHoodColorChange: (v: PorscheColorChoice) => void;
   porscheWindowTint: number;
   onPorscheWindowTintChange: (v: number) => void;
+  porscheDashboardColor: PorscheColorChoice;
+  onPorscheDashboardColorChange: (v: PorscheColorChoice) => void;
+  porscheDashboardAlcantaraColor: PorscheColorChoice;
+  onPorscheDashboardAlcantaraColorChange: (v: PorscheColorChoice) => void;
+  porscheSeatAlcantaraColor: PorscheColorChoice;
+  onPorscheSeatAlcantaraColorChange: (v: PorscheColorChoice) => void;
+  porscheSeatLeatherColor: PorscheColorChoice;
+  onPorscheSeatLeatherColorChange: (v: PorscheColorChoice) => void;
+  porscheSeatCarbonColor: PorscheColorChoice;
+  onPorscheSeatCarbonColorChange: (v: PorscheColorChoice) => void;
+  porscheCarpetColor: PorscheColorChoice;
+  onPorscheCarpetColorChange: (v: PorscheColorChoice) => void;
+  porscheDoorLeatherColor: PorscheColorChoice;
+  onPorscheDoorLeatherColorChange: (v: PorscheColorChoice) => void;
+  porscheDoorUpperAlcantaraColor: PorscheColorChoice;
+  onPorscheDoorUpperAlcantaraColorChange: (v: PorscheColorChoice) => void;
+  porscheDoorLowerAlcantaraColor: PorscheColorChoice;
+  onPorscheDoorLowerAlcantaraColorChange: (v: PorscheColorChoice) => void;
+  porscheDoorCarbonTrimColor: PorscheColorChoice;
+  onPorscheDoorCarbonTrimColorChange: (v: PorscheColorChoice) => void;
+  porscheDoorMetalTrimColor: PorscheColorChoice;
+  onPorscheDoorMetalTrimColorChange: (v: PorscheColorChoice) => void;
 }
 
 function CustomizationPanel({
@@ -774,6 +965,28 @@ function CustomizationPanel({
   onPorscheHoodColorChange,
   porscheWindowTint,
   onPorscheWindowTintChange,
+  porscheDashboardColor,
+  onPorscheDashboardColorChange,
+  porscheDashboardAlcantaraColor,
+  onPorscheDashboardAlcantaraColorChange,
+  porscheSeatAlcantaraColor,
+  onPorscheSeatAlcantaraColorChange,
+  porscheSeatLeatherColor,
+  onPorscheSeatLeatherColorChange,
+  porscheSeatCarbonColor,
+  onPorscheSeatCarbonColorChange,
+  porscheCarpetColor,
+  onPorscheCarpetColorChange,
+  porscheDoorLeatherColor,
+  onPorscheDoorLeatherColorChange,
+  porscheDoorUpperAlcantaraColor,
+  onPorscheDoorUpperAlcantaraColorChange,
+  porscheDoorLowerAlcantaraColor,
+  onPorscheDoorLowerAlcantaraColorChange,
+  porscheDoorCarbonTrimColor,
+  onPorscheDoorCarbonTrimColorChange,
+  porscheDoorMetalTrimColor,
+  onPorscheDoorMetalTrimColorChange,
 }: CustomizationPanelProps) {
   function renderControls(categoryId: string) {
     const bodyLabel = localeIsHe ? "צבע מרכב" : "Body Color";
@@ -941,6 +1154,94 @@ function CustomizationPanel({
             label={tintLabel}
             value={porscheWindowTint}
             onChange={onPorscheWindowTintChange}
+          />
+        );
+      }
+      if (categoryId === "dashboard") {
+        return (
+          <div className="space-y-3">
+            <ColorSwatchRow
+              label={localeIsHe ? "דשבורד" : "Dashboard"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheDashboardColor}
+              onChange={onPorscheDashboardColorChange}
+            />
+            <ColorSwatchRow
+              label={localeIsHe ? "דשבורד — אלקנטרה" : "Dashboard Alcantara"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheDashboardAlcantaraColor}
+              onChange={onPorscheDashboardAlcantaraColorChange}
+            />
+          </div>
+        );
+      }
+      if (categoryId === "seats") {
+        return (
+          <div className="space-y-3">
+            <ColorSwatchRow
+              label={localeIsHe ? "מושבים — אלקנטרה" : "Seat Alcantara"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheSeatAlcantaraColor}
+              onChange={onPorscheSeatAlcantaraColorChange}
+            />
+            <ColorSwatchRow
+              label={localeIsHe ? "מושבים — עור" : "Seat Leather"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheSeatLeatherColor}
+              onChange={onPorscheSeatLeatherColorChange}
+            />
+            <ColorSwatchRow
+              label={localeIsHe ? "מושבים — קרבון" : "Seat Carbon Shell"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheSeatCarbonColor}
+              onChange={onPorscheSeatCarbonColorChange}
+            />
+          </div>
+        );
+      }
+      if (categoryId === "door-trim") {
+        return (
+          <div className="space-y-3">
+            <ColorSwatchRow
+              label={localeIsHe ? "דלתות — עור" : "Door Leather"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheDoorLeatherColor}
+              onChange={onPorscheDoorLeatherColorChange}
+            />
+            <ColorSwatchRow
+              label={localeIsHe ? "דלתות — אלקנטרה עליון" : "Door Upper Alcantara"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheDoorUpperAlcantaraColor}
+              onChange={onPorscheDoorUpperAlcantaraColorChange}
+            />
+            <ColorSwatchRow
+              label={localeIsHe ? "דלתות — אלקנטרה תחתון" : "Door Lower Alcantara"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheDoorLowerAlcantaraColor}
+              onChange={onPorscheDoorLowerAlcantaraColorChange}
+            />
+            <ColorSwatchRow
+              label={localeIsHe ? "דלתות — גימור קרבון" : "Door Carbon Trim"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheDoorCarbonTrimColor}
+              onChange={onPorscheDoorCarbonTrimColorChange}
+            />
+            <ColorSwatchRow
+              label={localeIsHe ? "דלתות — גימור מתכת" : "Door Metal Trim"}
+              options={PORSCHE_BODY_COLORS}
+              value={porscheDoorMetalTrimColor}
+              onChange={onPorscheDoorMetalTrimColorChange}
+            />
+          </div>
+        );
+      }
+      if (categoryId === "interior-trim") {
+        return (
+          <ColorSwatchRow
+            label={localeIsHe ? "שטיחים" : "Carpet"}
+            options={PORSCHE_BODY_COLORS}
+            value={porscheCarpetColor}
+            onChange={onPorscheCarpetColorChange}
           />
         );
       }

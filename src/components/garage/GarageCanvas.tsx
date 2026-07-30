@@ -1430,10 +1430,7 @@ export interface GarageCanvasProps {
   onBydRimColorChange?: (value: PorscheColorChoice) => void;
   bydWindowTint?: number;
   onBydWindowTintChange?: (value: number) => void;
-  // Porsche — only the exterior-facing fields the Studio surfaces; the
-  // remaining interior material fields (dashboard/seat/door trims) stay
-  // internal-only, unexposed and untouched (out of this integration's
-  // scope, left at their original/default appearance).
+  // Porsche — exterior fields.
   porscheWheelColor?: PorscheColorChoice;
   onPorscheWheelColorChange?: (value: PorscheColorChoice) => void;
   porscheCaliperColor?: PorscheColorChoice;
@@ -1446,6 +1443,31 @@ export interface GarageCanvasProps {
   onPorscheHoodColorChange?: (value: PorscheColorChoice) => void;
   porscheWindowTint?: number;
   onPorscheWindowTintChange?: (value: number) => void;
+  // Porsche — interior fields. All optional/controlled, same fallback
+  // pattern as every other field: omitted props keep managing themselves
+  // internally exactly as before.
+  porscheDashboardColor?: PorscheColorChoice;
+  onPorscheDashboardColorChange?: (value: PorscheColorChoice) => void;
+  porscheDashboardAlcantaraColor?: PorscheColorChoice;
+  onPorscheDashboardAlcantaraColorChange?: (value: PorscheColorChoice) => void;
+  porscheSeatAlcantaraColor?: PorscheColorChoice;
+  onPorscheSeatAlcantaraColorChange?: (value: PorscheColorChoice) => void;
+  porscheSeatLeatherColor?: PorscheColorChoice;
+  onPorscheSeatLeatherColorChange?: (value: PorscheColorChoice) => void;
+  porscheSeatCarbonColor?: PorscheColorChoice;
+  onPorscheSeatCarbonColorChange?: (value: PorscheColorChoice) => void;
+  porscheCarpetColor?: PorscheColorChoice;
+  onPorscheCarpetColorChange?: (value: PorscheColorChoice) => void;
+  porscheDoorLeatherColor?: PorscheColorChoice;
+  onPorscheDoorLeatherColorChange?: (value: PorscheColorChoice) => void;
+  porscheDoorUpperAlcantaraColor?: PorscheColorChoice;
+  onPorscheDoorUpperAlcantaraColorChange?: (value: PorscheColorChoice) => void;
+  porscheDoorLowerAlcantaraColor?: PorscheColorChoice;
+  onPorscheDoorLowerAlcantaraColorChange?: (value: PorscheColorChoice) => void;
+  porscheDoorCarbonTrimColor?: PorscheColorChoice;
+  onPorscheDoorCarbonTrimColorChange?: (value: PorscheColorChoice) => void;
+  porscheDoorMetalTrimColor?: PorscheColorChoice;
+  onPorscheDoorMetalTrimColorChange?: (value: PorscheColorChoice) => void;
 }
 
 export const GarageCanvas = forwardRef<GarageCanvasHandle, GarageCanvasProps>(function GarageCanvas(
@@ -1483,6 +1505,28 @@ export const GarageCanvas = forwardRef<GarageCanvasHandle, GarageCanvasProps>(fu
     onPorscheHoodColorChange,
     porscheWindowTint: controlledPorscheWindowTint,
     onPorscheWindowTintChange,
+    porscheDashboardColor: controlledPorscheDashboardColor,
+    onPorscheDashboardColorChange,
+    porscheDashboardAlcantaraColor: controlledPorscheDashboardAlcantaraColor,
+    onPorscheDashboardAlcantaraColorChange,
+    porscheSeatAlcantaraColor: controlledPorscheSeatAlcantaraColor,
+    onPorscheSeatAlcantaraColorChange,
+    porscheSeatLeatherColor: controlledPorscheSeatLeatherColor,
+    onPorscheSeatLeatherColorChange,
+    porscheSeatCarbonColor: controlledPorscheSeatCarbonColor,
+    onPorscheSeatCarbonColorChange,
+    porscheCarpetColor: controlledPorscheCarpetColor,
+    onPorscheCarpetColorChange,
+    porscheDoorLeatherColor: controlledPorscheDoorLeatherColor,
+    onPorscheDoorLeatherColorChange,
+    porscheDoorUpperAlcantaraColor: controlledPorscheDoorUpperAlcantaraColor,
+    onPorscheDoorUpperAlcantaraColorChange,
+    porscheDoorLowerAlcantaraColor: controlledPorscheDoorLowerAlcantaraColor,
+    onPorscheDoorLowerAlcantaraColorChange,
+    porscheDoorCarbonTrimColor: controlledPorscheDoorCarbonTrimColor,
+    onPorscheDoorCarbonTrimColorChange,
+    porscheDoorMetalTrimColor: controlledPorscheDoorMetalTrimColor,
+    onPorscheDoorMetalTrimColorChange,
   },
   ref,
 ) {
@@ -1623,23 +1667,67 @@ export const GarageCanvas = forwardRef<GarageCanvasHandle, GarageCanvasProps>(fu
     null,
   );
 
-  const [porscheDashboardColor, setPorscheDashboardColor] = useState<PorscheColorChoice>(null);
+  const [porscheDashboardColor, setPorscheDashboardColor] = useControllable<PorscheColorChoice>(
+    controlledPorscheDashboardColor,
+    onPorscheDashboardColorChange,
+    null,
+  );
   const [porscheDashboardAlcantaraColor, setPorscheDashboardAlcantaraColor] =
-    useState<PorscheColorChoice>(null);
+    useControllable<PorscheColorChoice>(
+      controlledPorscheDashboardAlcantaraColor,
+      onPorscheDashboardAlcantaraColorChange,
+      null,
+    );
   const [porscheSeatAlcantaraColor, setPorscheSeatAlcantaraColor] =
-    useState<PorscheColorChoice>(null);
-  const [porscheSeatLeatherColor, setPorscheSeatLeatherColor] = useState<PorscheColorChoice>(null);
-  const [porscheSeatCarbonColor, setPorscheSeatCarbonColor] = useState<PorscheColorChoice>(null);
-  const [porscheCarpetColor, setPorscheCarpetColor] = useState<PorscheColorChoice>(null);
-  const [porscheDoorLeatherColor, setPorscheDoorLeatherColor] = useState<PorscheColorChoice>(null);
+    useControllable<PorscheColorChoice>(
+      controlledPorscheSeatAlcantaraColor,
+      onPorscheSeatAlcantaraColorChange,
+      null,
+    );
+  const [porscheSeatLeatherColor, setPorscheSeatLeatherColor] = useControllable<PorscheColorChoice>(
+    controlledPorscheSeatLeatherColor,
+    onPorscheSeatLeatherColorChange,
+    null,
+  );
+  const [porscheSeatCarbonColor, setPorscheSeatCarbonColor] = useControllable<PorscheColorChoice>(
+    controlledPorscheSeatCarbonColor,
+    onPorscheSeatCarbonColorChange,
+    null,
+  );
+  const [porscheCarpetColor, setPorscheCarpetColor] = useControllable<PorscheColorChoice>(
+    controlledPorscheCarpetColor,
+    onPorscheCarpetColorChange,
+    null,
+  );
+  const [porscheDoorLeatherColor, setPorscheDoorLeatherColor] = useControllable<PorscheColorChoice>(
+    controlledPorscheDoorLeatherColor,
+    onPorscheDoorLeatherColorChange,
+    null,
+  );
   const [porscheDoorUpperAlcantaraColor, setPorscheDoorUpperAlcantaraColor] =
-    useState<PorscheColorChoice>(null);
+    useControllable<PorscheColorChoice>(
+      controlledPorscheDoorUpperAlcantaraColor,
+      onPorscheDoorUpperAlcantaraColorChange,
+      null,
+    );
   const [porscheDoorLowerAlcantaraColor, setPorscheDoorLowerAlcantaraColor] =
-    useState<PorscheColorChoice>(null);
+    useControllable<PorscheColorChoice>(
+      controlledPorscheDoorLowerAlcantaraColor,
+      onPorscheDoorLowerAlcantaraColorChange,
+      null,
+    );
   const [porscheDoorCarbonTrimColor, setPorscheDoorCarbonTrimColor] =
-    useState<PorscheColorChoice>(null);
+    useControllable<PorscheColorChoice>(
+      controlledPorscheDoorCarbonTrimColor,
+      onPorscheDoorCarbonTrimColorChange,
+      null,
+    );
   const [porscheDoorMetalTrimColor, setPorscheDoorMetalTrimColor] =
-    useState<PorscheColorChoice>(null);
+    useControllable<PorscheColorChoice>(
+      controlledPorscheDoorMetalTrimColor,
+      onPorscheDoorMetalTrimColorChange,
+      null,
+    );
   const [porscheWindowTint, setPorscheWindowTint] = useControllable<number>(
     controlledPorscheWindowTint,
     onPorscheWindowTintChange,
