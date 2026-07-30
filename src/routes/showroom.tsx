@@ -6,15 +6,11 @@ import { useI18n } from "@/lib/i18n";
 import { VEHICLES } from "@/lib/vehicles";
 import { VehicleGlyph } from "@/components/landing-page";
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
-import bydSealAsset from "@/assets/byd-seal.png.asset.json";
-import bmwM3Asset from "@/assets/bmw-m3.png.asset.json";
-import porscheManthey from "@/assets/porsche-manthey.png.asset.json";
 
 const VEHICLE_IMAGES: Record<string, string> = {
-  "byd-seal": bydSealAsset.url,
-  "bmw-m3": bmwM3Asset.url,
-  "porsche-manthey": porscheManthey.url,
-
+  "byd-seal": "/vehicles/byd-seal.png",
+  "bmw-m3": "/vehicles/bmw-m3.png",
+  "porsche-manthey": "/vehicles/porsche-gt3rs.png",
 };
 
 export const Route = createFileRoute("/showroom")({
