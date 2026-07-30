@@ -62,7 +62,6 @@ export const VEHICLES: VehicleSummary[] = [
       "seats",
       "dashboard",
       "door-trim",
-      "interior-trim",
     ],
   },
 ];
