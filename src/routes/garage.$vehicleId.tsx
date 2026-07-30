@@ -40,12 +40,16 @@ import {
   Eye,
   Armchair,
   Disc3,
+  Pipette,
 } from "lucide-react";
 import {
   PORSCHE_BODY_COLORS,
   PORSCHE_WHEEL_COLORS,
   PORSCHE_CALIPER_COLORS,
   PORSCHE_HOOD_COLORS,
+  HEX_COLOR_PATTERN,
+  normalizeHexColor,
+  getReadableTextColor,
   type PorscheColorChoice,
   type PorscheColorOption,
   type PorscheHoodMode,
@@ -788,18 +792,44 @@ function ColorSwatchRow({
   options,
   value,
   onChange,
+  localeIsHe,
 }: {
   label: string;
   options: PorscheColorOption[];
   value: PorscheColorChoice;
   onChange: (value: PorscheColorChoice) => void;
+  localeIsHe: boolean;
 }) {
+  // Mirrors GarageCanvas.tsx's own PorscheColorRow custom-color pattern
+  // (shared normalizeHexColor/HEX_COLOR_PATTERN from colorPalettes.ts) so
+  // both the Studio and the internal debug panel validate/apply hex input
+  // identically — just styled to match the Studio design system here.
+  const [hexDraft, setHexDraft] = useState(value ?? "");
+
+  useEffect(() => {
+    setHexDraft(value ?? "");
+  }, [value]);
+
+  function handleHexInput(next: string) {
+    setHexDraft(next);
+    const normalized = normalizeHexColor(next);
+    if (HEX_COLOR_PATTERN.test(normalized)) {
+      onChange(normalized);
+      setHexDraft(normalized);
+    }
+  }
+
+  const isHexValid = hexDraft === "" || HEX_COLOR_PATTERN.test(normalizeHexColor(hexDraft));
+  const pickerValue = value && HEX_COLOR_PATTERN.test(value) ? value : "#808080";
+  const isCustomActive = value !== null && !options.some((opt) => opt.value === value);
+  const customLabel = localeIsHe ? "צבע מותאם אישית" : "Custom Color";
+
   return (
     <div className="space-y-2">
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {options.map((opt) => {
           const active = value === opt.value;
           return (
@@ -821,6 +851,52 @@ function ColorSwatchRow({
             />
           );
         })}
+
+        <label
+          className={`relative h-9 w-9 shrink-0 cursor-pointer overflow-hidden rounded-full border-2 transition-all grid place-items-center ${
+            isCustomActive
+              ? "border-primary ring-2 ring-primary/40"
+              : "border-white/20 hover:border-white/40"
+          }`}
+          style={isCustomActive && value ? { background: value } : undefined}
+          title={customLabel}
+        >
+          {!isCustomActive && <Pipette className="h-4 w-4 text-foreground/70" aria-hidden="true" />}
+          <input
+            type="color"
+            value={pickerValue}
+            onChange={(event) => {
+              const next = event.target.value.toUpperCase();
+              setHexDraft(next);
+              onChange(next);
+            }}
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+            aria-label={`${label} — ${customLabel}`}
+          />
+        </label>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-[11px] text-muted-foreground shrink-0">HEX</span>
+        <input
+          type="text"
+          value={hexDraft ?? ""}
+          placeholder="#RRGGBB"
+          maxLength={7}
+          onChange={(event) => handleHexInput(event.target.value)}
+          className={`h-8 w-28 rounded-md border bg-background/60 px-2 font-mono text-xs tracking-wide text-foreground focus:outline-none focus:ring-1 focus:ring-primary ${
+            isHexValid ? "border-white/15" : "border-destructive"
+          }`}
+          aria-label={`${label} — HEX`}
+        />
+        {value && HEX_COLOR_PATTERN.test(value) && (
+          <span
+            className="flex h-6 shrink-0 items-center rounded-full border border-white/20 px-2 font-mono text-[10px]"
+            style={{ background: value, color: getReadableTextColor(value) }}
+          >
+            {value}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -990,6 +1066,7 @@ function CustomizationPanel({
       if (categoryId === "body-color") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={bodyLabel}
             options={PORSCHE_BODY_COLORS}
             value={bmwBodyColor}
@@ -1000,6 +1077,7 @@ function CustomizationPanel({
       if (categoryId === "rim-color") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={rimLabel}
             options={PORSCHE_WHEEL_COLORS}
             value={bmwWheelColor}
@@ -1010,6 +1088,7 @@ function CustomizationPanel({
       if (categoryId === "seats") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={seatLabel}
             options={PORSCHE_WHEEL_COLORS}
             value={bmwSeatColor}
@@ -1020,6 +1099,7 @@ function CustomizationPanel({
       if (categoryId === "caliper-color") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={caliperLabel}
             options={PORSCHE_CALIPER_COLORS}
             value={bmwCaliperColor}
@@ -1038,6 +1118,7 @@ function CustomizationPanel({
       if (categoryId === "body-color") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={bodyLabel}
             options={PORSCHE_BODY_COLORS}
             value={bydBodyColor}
@@ -1048,6 +1129,7 @@ function CustomizationPanel({
       if (categoryId === "rim-color") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={rimLabel}
             options={PORSCHE_WHEEL_COLORS}
             value={bydRimColor}
@@ -1066,6 +1148,7 @@ function CustomizationPanel({
       if (categoryId === "body-color") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={bodyLabel}
             options={PORSCHE_BODY_COLORS}
             value={porscheBodyColor}
@@ -1076,6 +1159,7 @@ function CustomizationPanel({
       if (categoryId === "rim-color") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={rimLabel}
             options={PORSCHE_WHEEL_COLORS}
             value={porscheWheelColor}
@@ -1086,6 +1170,7 @@ function CustomizationPanel({
       if (categoryId === "caliper-color") {
         return (
           <ColorSwatchRow
+            localeIsHe={localeIsHe}
             label={caliperLabel}
             options={PORSCHE_CALIPER_COLORS}
             value={porscheCaliperColor}
@@ -1129,6 +1214,7 @@ function CustomizationPanel({
             </div>
             {porscheHoodMode === "separate" && (
               <ColorSwatchRow
+                localeIsHe={localeIsHe}
                 label={hoodLabel}
                 options={PORSCHE_HOOD_COLORS}
                 value={porscheHoodColor}
@@ -1151,12 +1237,14 @@ function CustomizationPanel({
         return (
           <div className="space-y-3">
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "דשבורד" : "Dashboard"}
               options={PORSCHE_BODY_COLORS}
               value={porscheDashboardColor}
               onChange={onPorscheDashboardColorChange}
             />
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "דשבורד — אלקנטרה" : "Dashboard Alcantara"}
               options={PORSCHE_BODY_COLORS}
               value={porscheDashboardAlcantaraColor}
@@ -1169,18 +1257,21 @@ function CustomizationPanel({
         return (
           <div className="space-y-3">
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "מושבים — אלקנטרה" : "Seat Alcantara"}
               options={PORSCHE_BODY_COLORS}
               value={porscheSeatAlcantaraColor}
               onChange={onPorscheSeatAlcantaraColorChange}
             />
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "מושבים — עור" : "Seat Leather"}
               options={PORSCHE_BODY_COLORS}
               value={porscheSeatLeatherColor}
               onChange={onPorscheSeatLeatherColorChange}
             />
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "מושבים — קרבון" : "Seat Carbon Shell"}
               options={PORSCHE_BODY_COLORS}
               value={porscheSeatCarbonColor}
@@ -1193,30 +1284,35 @@ function CustomizationPanel({
         return (
           <div className="space-y-3">
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "דלתות — עור" : "Door Leather"}
               options={PORSCHE_BODY_COLORS}
               value={porscheDoorLeatherColor}
               onChange={onPorscheDoorLeatherColorChange}
             />
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "דלתות — אלקנטרה עליון" : "Door Upper Alcantara"}
               options={PORSCHE_BODY_COLORS}
               value={porscheDoorUpperAlcantaraColor}
               onChange={onPorscheDoorUpperAlcantaraColorChange}
             />
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "דלתות — אלקנטרה תחתון" : "Door Lower Alcantara"}
               options={PORSCHE_BODY_COLORS}
               value={porscheDoorLowerAlcantaraColor}
               onChange={onPorscheDoorLowerAlcantaraColorChange}
             />
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "דלתות — גימור קרבון" : "Door Carbon Trim"}
               options={PORSCHE_BODY_COLORS}
               value={porscheDoorCarbonTrimColor}
               onChange={onPorscheDoorCarbonTrimColorChange}
             />
             <ColorSwatchRow
+              localeIsHe={localeIsHe}
               label={localeIsHe ? "דלתות — גימור מתכת" : "Door Metal Trim"}
               options={PORSCHE_BODY_COLORS}
               value={porscheDoorMetalTrimColor}

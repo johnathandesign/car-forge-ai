@@ -69,3 +69,27 @@ export const PORSCHE_HOOD_COLORS: PorscheColorOption[] = [
   { label: "Orange", value: "#F26A21" },
   { label: "Purple", value: "#5B2C83" },
 ];
+
+// Shared hex-color helpers — used by both GarageCanvas's own debug color
+// panel (PorscheColorRow, validationMode-only) and the Studio's ColorSwatchRow
+// so custom-color entry behaves identically everywhere: same normalization,
+// same validity check, same contrast logic. Pure/no side effects, so this
+// stays safe to import from the SSR-rendered route too.
+export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
+
+export function normalizeHexColor(value: string): string {
+  const trimmed = value.trim();
+  const withHash = trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
+  return withHash.toUpperCase();
+}
+
+export function getReadableTextColor(background: string | null): string {
+  if (!background || !HEX_COLOR_PATTERN.test(background)) {
+    return "#FFFFFF";
+  }
+  const red = Number.parseInt(background.slice(1, 3), 16);
+  const green = Number.parseInt(background.slice(3, 5), 16);
+  const blue = Number.parseInt(background.slice(5, 7), 16);
+  const luminance = (red * 299 + green * 587 + blue * 114) / 1000;
+  return luminance > 155 ? "#111111" : "#FFFFFF";
+}
