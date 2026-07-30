@@ -364,6 +364,28 @@ function PoseTracker({
   return null;
 }
 
+// Captures the live WebGL renderer into a ref the outer GarageCanvas
+// function can reach for PNG capture (capturePng on GarageCanvasHandle).
+// Mirrors PoseTracker's existing bridge-component pattern — same technique,
+// just carrying `gl` instead of camera/controls.
+function RendererCapture({
+  rendererRef,
+}: {
+  rendererRef: { current: THREE.WebGLRenderer | null };
+}) {
+  const { gl } = useThree();
+
+  useEffect(() => {
+    rendererRef.current = gl;
+
+    return () => {
+      rendererRef.current = null;
+    };
+  }, [gl, rendererRef]);
+
+  return null;
+}
+
 function CalibrationFreeCamera() {
   const { camera, gl, controls } = useThree();
 
@@ -1377,6 +1399,10 @@ export interface GarageCanvasHandle {
   showExteriorView: () => void;
   showInteriorView: () => void;
   focusWheels: () => void;
+  // Returns a "image/png" data URL of the current frame, or null if the
+  // renderer isn't mounted yet. Relies on the <Canvas> below already being
+  // configured with gl={{ preserveDrawingBuffer: true }}.
+  capturePng: () => string | null;
 }
 
 export interface GarageCanvasProps {
@@ -1766,6 +1792,7 @@ export const GarageCanvas = forwardRef<GarageCanvasHandle, GarageCanvasProps>(fu
     showExteriorView,
     showInteriorView,
     focusWheels,
+    capturePng,
   }));
 
   function toggleCalibrationFreeCamera() {
@@ -1781,6 +1808,20 @@ export const GarageCanvas = forwardRef<GarageCanvasHandle, GarageCanvasProps>(fu
   }
 
   const poseRef = useRef<CapturedPose | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+
+  // The <Canvas> below is already configured with gl={{ preserveDrawingBuffer: true }},
+  // which is what makes toDataURL() reliably capture the current frame instead
+  // of a blank/cleared buffer — no extra render call needed here.
+  function capturePng(): string | null {
+    const renderer = rendererRef.current;
+
+    if (!renderer) {
+      return null;
+    }
+
+    return renderer.domElement.toDataURL("image/png");
+  }
 
   function formatCurrentPose(): string | null {
     const pose = poseRef.current;
@@ -2095,6 +2136,8 @@ export const GarageCanvas = forwardRef<GarageCanvasHandle, GarageCanvasProps>(fu
           <ContactShadows position={[0, 0, 0]} opacity={0.65} blur={2.4} scale={12} far={4} />
 
           <OrbitControls makeDefault enableDamping autoRotateSpeed={0.6} />
+
+          <RendererCapture rendererRef={rendererRef} />
 
           <>
             <CameraRig

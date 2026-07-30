@@ -53,6 +53,8 @@ type Dict = {
     cameraExterior: string;
     cameraInterior: string;
     cameraFocusWheels: string;
+    downloadDesign: string;
+    downloadingDesign: string;
   };
   a11y: {
     trigger: string;
@@ -140,6 +142,8 @@ const DICT: Record<Locale, Dict> = {
       cameraExterior: "מבט חיצוני",
       cameraInterior: "מבט פנימי",
       cameraFocusWheels: "התמקדות בחישוקים",
+      downloadDesign: "הורדת העיצוב",
+      downloadingDesign: "מייצר תמונה…",
     },
     a11y: {
       trigger: "אפשרויות נגישות",
@@ -242,6 +246,8 @@ const DICT: Record<Locale, Dict> = {
       cameraExterior: "Exterior View",
       cameraInterior: "Interior View",
       cameraFocusWheels: "Focus Wheels",
+      downloadDesign: "Download Design",
+      downloadingDesign: "Generating…",
     },
     a11y: {
       trigger: "Accessibility Options",

@@ -41,6 +41,8 @@ import {
   Armchair,
   Disc3,
   Pipette,
+  Download,
+  Loader2,
 } from "lucide-react";
 import {
   PORSCHE_BODY_COLORS,
@@ -121,6 +123,7 @@ function GaragePage() {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [mobilePanelOpen, setMobilePanelOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const garageRef = useRef<GarageCanvasHandle>(null);
 
@@ -229,6 +232,31 @@ function GaragePage() {
         setPorscheDoorMetalTrimColor(null);
         break;
     }
+  }
+
+  // capturePng() is synchronous (canvas.toDataURL) but can still take a
+  // noticeable moment on a large canvas — the setTimeout lets React commit
+  // the isDownloading=true render (spinner, disabled button) before the
+  // blocking capture call runs, instead of freezing mid-click with no
+  // visible feedback.
+  function handleDownloadDesign() {
+    if (isDownloading || !vehicle) return;
+    setIsDownloading(true);
+
+    setTimeout(() => {
+      const dataUrl = garageRef.current?.capturePng() ?? null;
+
+      if (dataUrl) {
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = `carforge-${vehicle.id}-design.png`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+
+      setIsDownloading(false);
+    }, 0);
   }
 
   const changeSummary: { label: string; value: string }[] = [];
@@ -371,6 +399,23 @@ function GaragePage() {
               <RefreshCw className="h-4 w-4" />
               <span className="hidden md:inline text-xs uppercase tracking-wider font-semibold">
                 {t.garage.reset}
+              </span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="min-h-11 gap-2 border-white/15 bg-transparent hover:bg-white/5 disabled:opacity-60"
+              onClick={handleDownloadDesign}
+              disabled={isDownloading}
+              aria-label={isDownloading ? t.garage.downloadingDesign : t.garage.downloadDesign}
+            >
+              {isDownloading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              <span className="hidden md:inline text-xs uppercase tracking-wider font-semibold">
+                {isDownloading ? t.garage.downloadingDesign : t.garage.downloadDesign}
               </span>
             </Button>
             <Button
