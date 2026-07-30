@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useParams, useNavigate, ClientOnly } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useReducer, useRef, useState } from "react";
 import { AppHeader } from "@/components/app-header";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -59,6 +59,16 @@ import {
 import type { GarageCanvasHandle } from "@/components/garage/GarageCanvas";
 import type { ValidationVehicleId } from "@/components/garage/VehicleSelector";
 import type { DesignState } from "@/types/carModelDesign";
+import {
+  designHistoryReducer,
+  createDesignHistory,
+  DEFAULT_BMW_SNAPSHOT,
+  DEFAULT_BYD_SNAPSHOT,
+  DEFAULT_PORSCHE_SNAPSHOT,
+  type BmwDesignSnapshot,
+  type BydDesignSnapshot,
+  type PorscheDesignSnapshot,
+} from "@/components/garage/designHistory";
 
 // Lazy-loaded (never a static import): GarageCanvas.tsx pulls in three.js /
 // @react-three/fiber and, transitively, useGLTF.preload() calls that run at
@@ -130,42 +140,155 @@ function GaragePage() {
   // Real customization state — single source of truth, independent per
   // vehicle, passed straight into GarageCanvas as controlled props. This is
   // the actual configurator state (not a second/parallel design state).
-  const [bmwBodyColor, setBmwBodyColor] = useState<PorscheColorChoice>(null);
-  const [bmwWheelColor, setBmwWheelColor] = useState<PorscheColorChoice>(null);
-  const [bmwSeatColor, setBmwSeatColor] = useState<PorscheColorChoice>(null);
-  const [bmwCaliperColor, setBmwCaliperColor] = useState<PorscheColorChoice>(null);
-  const [bmwWindowTint, setBmwWindowTint] = useState(0);
+  //
+  // Each vehicle's fields live in one canonical snapshot object managed by
+  // a past/present/future history reducer (designHistory.ts), so Undo/Redo
+  // in the Studio toolbar operate on real design changes. The individual
+  // `bmwBodyColor`/`setBmwBodyColor`-style values below are derived from
+  // that snapshot so every existing consumer (GarageCanvas props,
+  // CustomizationPanel, Change Summary) keeps reading/writing them exactly
+  // as before — only how they're sourced changed, not their shape.
+  const [bmwHistory, dispatchBmwHistory] = useReducer(
+    designHistoryReducer<BmwDesignSnapshot>,
+    DEFAULT_BMW_SNAPSHOT,
+    createDesignHistory,
+  );
+  const bmwBodyColor = bmwHistory.present.bodyColor;
+  const bmwWheelColor = bmwHistory.present.wheelColor;
+  const bmwSeatColor = bmwHistory.present.seatColor;
+  const bmwCaliperColor = bmwHistory.present.caliperColor;
+  const bmwWindowTint = bmwHistory.present.windowTint;
+  const setBmwBodyColor = (value: PorscheColorChoice) =>
+    dispatchBmwHistory({ type: "set", snapshot: { ...bmwHistory.present, bodyColor: value } });
+  const setBmwWheelColor = (value: PorscheColorChoice) =>
+    dispatchBmwHistory({ type: "set", snapshot: { ...bmwHistory.present, wheelColor: value } });
+  const setBmwSeatColor = (value: PorscheColorChoice) =>
+    dispatchBmwHistory({ type: "set", snapshot: { ...bmwHistory.present, seatColor: value } });
+  const setBmwCaliperColor = (value: PorscheColorChoice) =>
+    dispatchBmwHistory({ type: "set", snapshot: { ...bmwHistory.present, caliperColor: value } });
+  const setBmwWindowTint = (value: number) =>
+    dispatchBmwHistory({ type: "set", snapshot: { ...bmwHistory.present, windowTint: value } });
 
-  const [bydBodyColor, setBydBodyColor] = useState<PorscheColorChoice>(null);
-  const [bydRimColor, setBydRimColor] = useState<PorscheColorChoice>(null);
-  const [bydWindowTint, setBydWindowTint] = useState(0);
-
-  const [porscheWheelColor, setPorscheWheelColor] = useState<PorscheColorChoice>(null);
-  const [porscheCaliperColor, setPorscheCaliperColor] = useState<PorscheColorChoice>(null);
-  const [porscheBodyColor, setPorscheBodyColor] = useState<PorscheColorChoice>(null);
-  const [porscheHoodMode, setPorscheHoodMode] = useState<PorscheHoodMode>("separate");
-  const [porscheHoodColor, setPorscheHoodColor] = useState<PorscheColorChoice>(null);
-  const [porscheWindowTint, setPorscheWindowTint] = useState(0);
+  const [bydHistory, dispatchBydHistory] = useReducer(
+    designHistoryReducer<BydDesignSnapshot>,
+    DEFAULT_BYD_SNAPSHOT,
+    createDesignHistory,
+  );
+  const bydBodyColor = bydHistory.present.bodyColor;
+  const bydRimColor = bydHistory.present.rimColor;
+  const bydWindowTint = bydHistory.present.windowTint;
+  const setBydBodyColor = (value: PorscheColorChoice) =>
+    dispatchBydHistory({ type: "set", snapshot: { ...bydHistory.present, bodyColor: value } });
+  const setBydRimColor = (value: PorscheColorChoice) =>
+    dispatchBydHistory({ type: "set", snapshot: { ...bydHistory.present, rimColor: value } });
+  const setBydWindowTint = (value: number) =>
+    dispatchBydHistory({ type: "set", snapshot: { ...bydHistory.present, windowTint: value } });
 
   // Porsche interior — the same real fields GarageCanvas already owns
-  // internally (see PorscheModel.tsx), now lifted to the route as
-  // controlled props instead of staying unreachable from the Studio UI.
-  const [porscheDashboardColor, setPorscheDashboardColor] = useState<PorscheColorChoice>(null);
-  const [porscheDashboardAlcantaraColor, setPorscheDashboardAlcantaraColor] =
-    useState<PorscheColorChoice>(null);
-  const [porscheSeatAlcantaraColor, setPorscheSeatAlcantaraColor] =
-    useState<PorscheColorChoice>(null);
-  const [porscheSeatLeatherColor, setPorscheSeatLeatherColor] = useState<PorscheColorChoice>(null);
-  const [porscheSeatCarbonColor, setPorscheSeatCarbonColor] = useState<PorscheColorChoice>(null);
-  const [porscheDoorLeatherColor, setPorscheDoorLeatherColor] = useState<PorscheColorChoice>(null);
-  const [porscheDoorUpperAlcantaraColor, setPorscheDoorUpperAlcantaraColor] =
-    useState<PorscheColorChoice>(null);
-  const [porscheDoorLowerAlcantaraColor, setPorscheDoorLowerAlcantaraColor] =
-    useState<PorscheColorChoice>(null);
-  const [porscheDoorCarbonTrimColor, setPorscheDoorCarbonTrimColor] =
-    useState<PorscheColorChoice>(null);
-  const [porscheDoorMetalTrimColor, setPorscheDoorMetalTrimColor] =
-    useState<PorscheColorChoice>(null);
+  // internally (see PorscheModel.tsx), lifted to the route as controlled
+  // props. Porsche Carpet stays removed (DEFAULT_PORSCHE_SNAPSHOT has no
+  // carpet field) and must not be reintroduced here.
+  const [porscheHistory, dispatchPorscheHistory] = useReducer(
+    designHistoryReducer<PorscheDesignSnapshot>,
+    DEFAULT_PORSCHE_SNAPSHOT,
+    createDesignHistory,
+  );
+  const porscheWheelColor = porscheHistory.present.wheelColor;
+  const porscheCaliperColor = porscheHistory.present.caliperColor;
+  const porscheBodyColor = porscheHistory.present.bodyColor;
+  const porscheHoodMode = porscheHistory.present.hoodMode;
+  const porscheHoodColor = porscheHistory.present.hoodColor;
+  const porscheWindowTint = porscheHistory.present.windowTint;
+  const porscheDashboardColor = porscheHistory.present.dashboardColor;
+  const porscheDashboardAlcantaraColor = porscheHistory.present.dashboardAlcantaraColor;
+  const porscheSeatAlcantaraColor = porscheHistory.present.seatAlcantaraColor;
+  const porscheSeatLeatherColor = porscheHistory.present.seatLeatherColor;
+  const porscheSeatCarbonColor = porscheHistory.present.seatCarbonColor;
+  const porscheDoorLeatherColor = porscheHistory.present.doorLeatherColor;
+  const porscheDoorUpperAlcantaraColor = porscheHistory.present.doorUpperAlcantaraColor;
+  const porscheDoorLowerAlcantaraColor = porscheHistory.present.doorLowerAlcantaraColor;
+  const porscheDoorCarbonTrimColor = porscheHistory.present.doorCarbonTrimColor;
+  const porscheDoorMetalTrimColor = porscheHistory.present.doorMetalTrimColor;
+  const setPorscheWheelColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, wheelColor: value },
+    });
+  const setPorscheCaliperColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, caliperColor: value },
+    });
+  const setPorscheBodyColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, bodyColor: value },
+    });
+  const setPorscheHoodMode = (value: PorscheHoodMode) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, hoodMode: value },
+    });
+  const setPorscheHoodColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, hoodColor: value },
+    });
+  const setPorscheWindowTint = (value: number) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, windowTint: value },
+    });
+  const setPorscheDashboardColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, dashboardColor: value },
+    });
+  const setPorscheDashboardAlcantaraColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, dashboardAlcantaraColor: value },
+    });
+  const setPorscheSeatAlcantaraColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, seatAlcantaraColor: value },
+    });
+  const setPorscheSeatLeatherColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, seatLeatherColor: value },
+    });
+  const setPorscheSeatCarbonColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, seatCarbonColor: value },
+    });
+  const setPorscheDoorLeatherColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, doorLeatherColor: value },
+    });
+  const setPorscheDoorUpperAlcantaraColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, doorUpperAlcantaraColor: value },
+    });
+  const setPorscheDoorLowerAlcantaraColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, doorLowerAlcantaraColor: value },
+    });
+  const setPorscheDoorCarbonTrimColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, doorCarbonTrimColor: value },
+    });
+  const setPorscheDoorMetalTrimColor = (value: PorscheColorChoice) =>
+    dispatchPorscheHistory({
+      type: "set",
+      snapshot: { ...porscheHistory.present, doorMetalTrimColor: value },
+    });
 
   // Reset whenever the route's vehicle changes camera framing back to a
   // known-safe default (GarageCanvas already clamps every preset itself —
@@ -199,37 +322,68 @@ function GaragePage() {
     }
   }
 
+  // Reset Design and Restore All Original both land here — dispatching one
+  // full-snapshot "set" (rather than calling each field setter separately)
+  // so a reset is a single undoable step, not one step per field.
   function restoreCurrentVehicle() {
     switch (vehicle?.id) {
       case "bmw-m3":
-        setBmwBodyColor(null);
-        setBmwWheelColor(null);
-        setBmwSeatColor(null);
-        setBmwCaliperColor(null);
-        setBmwWindowTint(0);
+        dispatchBmwHistory({ type: "set", snapshot: DEFAULT_BMW_SNAPSHOT });
         break;
       case "byd-seal":
-        setBydBodyColor(null);
-        setBydRimColor(null);
-        setBydWindowTint(0);
+        dispatchBydHistory({ type: "set", snapshot: DEFAULT_BYD_SNAPSHOT });
         break;
       case "porsche-manthey":
-        setPorscheWheelColor(null);
-        setPorscheCaliperColor(null);
-        setPorscheBodyColor(null);
-        setPorscheHoodMode("separate");
-        setPorscheHoodColor(null);
-        setPorscheWindowTint(0);
-        setPorscheDashboardColor(null);
-        setPorscheDashboardAlcantaraColor(null);
-        setPorscheSeatAlcantaraColor(null);
-        setPorscheSeatLeatherColor(null);
-        setPorscheSeatCarbonColor(null);
-        setPorscheDoorLeatherColor(null);
-        setPorscheDoorUpperAlcantaraColor(null);
-        setPorscheDoorLowerAlcantaraColor(null);
-        setPorscheDoorCarbonTrimColor(null);
-        setPorscheDoorMetalTrimColor(null);
+        dispatchPorscheHistory({ type: "set", snapshot: DEFAULT_PORSCHE_SNAPSHOT });
+        break;
+    }
+  }
+
+  // Undo/Redo operate on whichever vehicle is currently active in the
+  // route — each vehicle keeps its own independent past/future stack, so
+  // switching vehicles never corrupts another vehicle's history.
+  const canUndo =
+    vehicle?.id === "bmw-m3"
+      ? bmwHistory.past.length > 0
+      : vehicle?.id === "byd-seal"
+        ? bydHistory.past.length > 0
+        : vehicle?.id === "porsche-manthey"
+          ? porscheHistory.past.length > 0
+          : false;
+
+  const canRedo =
+    vehicle?.id === "bmw-m3"
+      ? bmwHistory.future.length > 0
+      : vehicle?.id === "byd-seal"
+        ? bydHistory.future.length > 0
+        : vehicle?.id === "porsche-manthey"
+          ? porscheHistory.future.length > 0
+          : false;
+
+  function handleUndo() {
+    switch (vehicle?.id) {
+      case "bmw-m3":
+        dispatchBmwHistory({ type: "undo" });
+        break;
+      case "byd-seal":
+        dispatchBydHistory({ type: "undo" });
+        break;
+      case "porsche-manthey":
+        dispatchPorscheHistory({ type: "undo" });
+        break;
+    }
+  }
+
+  function handleRedo() {
+    switch (vehicle?.id) {
+      case "bmw-m3":
+        dispatchBmwHistory({ type: "redo" });
+        break;
+      case "byd-seal":
+        dispatchBydHistory({ type: "redo" });
+        break;
+      case "porsche-manthey":
+        dispatchPorscheHistory({ type: "redo" });
         break;
     }
   }
@@ -369,14 +523,16 @@ function GaragePage() {
             <IconBtn
               label={t.garage.undo}
               icon={<Undo2 className="h-4 w-4" />}
-              disabled
-              title={t.garage.disabled}
+              onClick={handleUndo}
+              disabled={!canUndo}
+              title={t.garage.undo}
             />
             <IconBtn
               label={t.garage.redo}
               icon={<Redo2 className="h-4 w-4" />}
-              disabled
-              title={t.garage.disabled}
+              onClick={handleRedo}
+              disabled={!canRedo}
+              title={t.garage.redo}
             />
             <IconBtn
               label={t.garage.returnOriginal}
