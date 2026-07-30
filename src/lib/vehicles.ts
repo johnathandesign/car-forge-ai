@@ -31,10 +31,7 @@ export const VEHICLES: VehicleSummary[] = [
     descriptionEn: "A performance sedan with a sharp presence and dynamic lines.",
     personality: "sport",
     availability: "available",
-    supportedCategories: [
-      "body-color", "rim-color", "rim-style", "spoilers", "bumpers", "trim",
-      "interior-color", "seats", "dashboard", "door-trim", "interior-accent", "interior-trim",
-    ],
+    supportedCategories: ["body-color", "rim-color", "caliper-color", "window-tint", "seats"],
   },
   {
     id: "byd-seal",
@@ -45,10 +42,7 @@ export const VEHICLES: VehicleSummary[] = [
     descriptionEn: "An electric sedan with a clean, modern, and aerodynamic design.",
     personality: "electric",
     availability: "available",
-    supportedCategories: [
-      "body-color", "rim-color", "rim-style", "bumpers",
-      "interior-color", "seats", "dashboard", "door-trim",
-    ],
+    supportedCategories: ["body-color", "rim-color", "window-tint"],
   },
   {
     id: "porsche-manthey",
@@ -59,10 +53,7 @@ export const VEHICLES: VehicleSummary[] = [
     descriptionEn: "An iconic track-focused car with a technical and aggressive character.",
     personality: "track",
     availability: "available",
-    supportedCategories: [
-      "body-color", "rim-color", "spoilers", "bumpers", "trim",
-      "interior-color", "seats", "interior-accent",
-    ],
+    supportedCategories: ["body-color", "rim-color", "caliper-color", "hood-color", "window-tint"],
   },
 ];
 
@@ -73,6 +64,9 @@ export function getVehicle(id: string): VehicleSummary | undefined {
 export const EXTERIOR_CATEGORIES = [
   { id: "body-color", he: "צבע מרכב", en: "Body Color" },
   { id: "rim-color", he: "צבע חישוקים", en: "Rim Color" },
+  { id: "caliper-color", he: "צבע קליפרים", en: "Brake Caliper Color" },
+  { id: "hood-color", he: "צבע מכסה מנוע", en: "Hood Color" },
+  { id: "window-tint", he: "הכהיית חלונות", en: "Window Tint" },
   { id: "rim-style", he: "עיצוב חישוקים", en: "Rim Style" },
   { id: "spoilers", he: "כנפיים / ספוילרים", en: "Wings / Spoilers" },
   { id: "bumpers", he: "פגושים", en: "Bumpers" },
