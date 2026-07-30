@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { BrandAsset } from "@/components/brand-asset";
 import { LanguageToggle } from "@/components/language-toggle";
 import { AccessibilityMenu } from "@/components/accessibility-menu";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ export function AppHeader() {
     <header className="sticky top-0 z-40 border-b border-white/8 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-[76px] max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="CarForge AI">
-          <BrandAsset className="h-11 w-auto" />
+          <img src="/carforge-logo.png" alt="CarForge AI" className="h-11 w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1 ms-4" aria-label="Primary">
@@ -67,7 +66,7 @@ export function AppHeader() {
               </SheetTrigger>
               <SheetContent side={dir === "rtl" ? "right" : "left"} className="bg-background border-white/10 w-[85vw] sm:w-96 flex flex-col gap-4">
                 <SheetTitle className="text-base">
-                  <BrandAsset className="h-8 w-auto" />
+                  <img src="/carforge-logo.png" alt="CarForge AI" className="h-8 w-auto" />
                 </SheetTitle>
                 <nav className="flex flex-col gap-1 mt-2" aria-label="Mobile">
                   {links.map((l) => (
